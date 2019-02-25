@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -63,22 +61,30 @@ class CommuterAppState extends State<CommuterApp> {
 
   List trains = [];
 
-    CommuterAppState(){
+    @override
+    void initState(){
+      super.initState();
       getTrainTimes();
     }
 
     getTrainTimes() async {
-    var response = await http.get(
-      Uri.encodeFull("http://127.0.0.1:5000/commuter"),
-      headers: {
-        "Accept": "application/json"
+      try {
+        var response = await http.get(
+        Uri.encodeFull("http://127.0.0.1:5000/commuter"),
+          headers: {
+            "Accept": "application/json"
+          }
+        );
+        print(json.decode(response.body));
+        trains = json.decode(response.body);
+      } catch (e) {
+        debugPrint('Unable to connect to API!!!');
+        trains = [];
       }
-    );
-    print(json.decode(response.body));
-    setState(() {
-      trains = json.decode(response.body);
-    });
-    
+
+      setState(() {
+        this.trains = trains;
+      }); 
   }
 
   @override
@@ -89,26 +95,20 @@ class CommuterAppState extends State<CommuterApp> {
       ),
       body: GridView.count(
         crossAxisCount: 1,
-        children: getChildren(),
+        children: displayTrains(),
       )
     );
   }
 
-  getChildren() {
-    print('train len ');
-    print(trains.length);
-
-    // somehow fix this - train times need to be loaded earlier
-    if (trains.length == 0) {
-        return List.generate(1, (index) {
-        return Center(
-          child: Text('No data available...')
-          );
-      }
-    );
+  displayTrains() {
+    if (trains.isEmpty) {
+        return displayNoTrains(); 
+    } else {
+      return displayTrainData();
+    }
   }
-    
 
+  List<Widget> displayTrainData() {
     return List.generate(trains.length, (index) {
         return Center(
           child: RichText(
@@ -125,4 +125,34 @@ class CommuterAppState extends State<CommuterApp> {
       }
     );
   }
+
+  List<Widget> displayNoTrains(){
+    return List.generate(1, (index) {
+        return Center(
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              new Text(
+                'No data loaded...',
+                style: new TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30.0,
+                ),
+              ),
+              new RaisedButton(
+                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(90.0)),
+                padding: const EdgeInsets.all(10.0),
+                textColor: Colors.white,
+                color: Colors.deepPurple,
+                onPressed: getTrainTimes,
+                child: Icon(Icons.refresh, size: 150,),
+              ),
+            ],
+  
+          ),
+        );
+      });   
+  } 
+
 }
+
