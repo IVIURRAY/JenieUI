@@ -109,22 +109,29 @@ class CommuterAppState extends State<CommuterApp> {
   }
 
   List<Widget> displayTrainData() {
+    print(trains);
     return List.generate(trains.length, (index) {
-        return Center(
-          child: RichText(
-              text: TextSpan(
-                text: 'Platform ' + trains[index]['platform'],
-                style: TextStyle(fontSize: 60, color: Colors.deepPurple),
-                children: <TextSpan>[
-                  TextSpan(text: '\n' + trains[index]['dest']),
-                  TextSpan(text: '\n' + trains[index]['dept']),
-                ]
+        return Card(
+          elevation: 10,
+          margin: EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:[
+              Container(  
+                padding: EdgeInsets.all(5),
+                child: FloatingActionButton(
+                  onPressed: null,
+                  child: trains[index]['platform'] != '' ? Text(trains[index]['platform'], style: TextStyle(fontSize: 30),) : Icon(Icons.train)
+                )
+              ),
+              Container(
+                child: Text('Departure: ' + trains[index]['dept'], style: TextStyle(fontSize: 30)),
               )
+            ],
           )
         );
+      });
       }
-    );
-  }
 
   List<Widget> displayNoTrains(){
     return List.generate(1, (index) {
