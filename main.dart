@@ -34,15 +34,15 @@ class MyHomePage extends StatelessWidget {
           // Create a grid with 2 columns. If you change the scrollDirection to
           // horizontal, this would produce 2 rows.
           crossAxisCount: 2,
-          children: List.generate(5, (index) {
+          children: List.generate(1, (index) {
             return Center(               
                 child: IconButton(
                   onPressed: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => CommuterApp()));
                   },
-                  icon: Icon(Icons.category),
+                  icon: Icon(Icons.train),
                   iconSize: 80,
-                  tooltip: 'App $index',
+                  // tooltip: 'App $index',
                   color: Colors.deepPurple,
               )
             );
@@ -96,6 +96,7 @@ class CommuterAppState extends State<CommuterApp> {
       body: GridView.count(
         crossAxisCount: 1,
         children: displayTrains(),
+        childAspectRatio: this.trains.isEmpty ? 1:2,
       )
     );
   }
@@ -111,9 +112,10 @@ class CommuterAppState extends State<CommuterApp> {
   List<Widget> displayTrainData() {
     print(trains);
     return List.generate(trains.length, (index) {
-        return Card(
+        return Container(
+          child: Card(
           elevation: 10,
-          margin: EdgeInsets.all(20),
+          margin: EdgeInsets.all(5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children:[
@@ -129,6 +131,7 @@ class CommuterAppState extends State<CommuterApp> {
               )
             ],
           )
+        )
         );
       });
       }
@@ -155,7 +158,6 @@ class CommuterAppState extends State<CommuterApp> {
                 child: Icon(Icons.refresh, size: 150,),
               ),
             ],
-  
           ),
         );
       });   
